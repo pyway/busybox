@@ -34,7 +34,7 @@ struct d6_packet {
 		uint8_t d6_msg_type;
 		uint32_t d6_xid32;
 	} d6_u;
-	uint8_t d6_options[576 - sizeof(struct iphdr) - sizeof(struct udphdr) - 4
+	uint8_t d6_options[576 - sizeof(struct ip6_hdr) - sizeof(struct udphdr) - 4
 			+ CONFIG_UDHCPC_SLACK_FOR_BUGGY_SERVERS];
 } PACKED;
 #define d6_msg_type d6_u.d6_msg_type
@@ -141,11 +141,16 @@ struct client6_data_t {
 	unsigned env_idx;
 	/* link-local IPv6 address */
 	struct in6_addr ll_ip6;
-};
+} FIX_ALIASING;
 
 #define client6_data (*(struct client6_data_t*)(&bb_common_bufsiz1[COMMON_BUFSIZE - sizeof(struct client6_data_t)]))
 
-int FAST_FUNC d6_read_interface(const char *interface, int *ifindex, struct in6_addr *nip6, uint8_t *mac);
+int FAST_FUNC d6_read_interface(
+		const char *interface,
+		int *ifindex,
+		struct in6_addr *nip6,
+		uint8_t *mac
+);
 
 int FAST_FUNC d6_listen_socket(int port, const char *inf);
 

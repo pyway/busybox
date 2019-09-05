@@ -1245,7 +1245,7 @@ static action*** parse_params(char **argv)
 			 * coreutils expects {} to appear only once in "-exec +"
 			 */
 			if (all_subst != 1 && ap->filelist)
-				bb_error_msg_and_die("only one '{}' allowed for -exec +");
+				bb_simple_error_msg_and_die("only one '{}' allowed for -exec +");
 # endif
 		}
 #endif
@@ -1259,7 +1259,7 @@ static action*** parse_params(char **argv)
 			endarg = argv;
 			while (1) {
 				if (!*++endarg)
-					bb_error_msg_and_die("unpaired '('");
+					bb_simple_error_msg_and_die("unpaired '('");
 				if (LONE_CHAR(*endarg, '('))
 					nested++;
 				else if (LONE_CHAR(*endarg, ')') && !--nested) {
@@ -1467,6 +1467,12 @@ int find_main(int argc UNUSED_PARAM, char **argv)
 			break;
 		if (!saved[1])
 			break; /* it is "-" */
+		if (saved[1] == '-' && !saved[2]) {
+			/* it is "--" */
+			/* Try: find -- /dev/null */
+			saved = *++past_HLP;
+			break;
+		}
 		if ((saved+1)[strspn(saved+1, "HLP")] != '\0')
 			break;
 	}

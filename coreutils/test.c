@@ -20,7 +20,7 @@
  *     "This program is in the Public Domain."
  */
 //config:config TEST
-//config:	bool "test (3.6 kb)"
+//config:	bool "test (4.1 kb)"
 //config:	default y
 //config:	help
 //config:	test is used to check file types and compare values,
@@ -832,12 +832,12 @@ int test_main(int argc, char **argv)
 		--argc;
 		if (!arg0[1]) { /* "[" ? */
 			if (NOT_LONE_CHAR(argv[argc], ']')) {
-				bb_error_msg("missing ]");
+				bb_simple_error_msg("missing ]");
 				return 2;
 			}
 		} else { /* assuming "[[" */
 			if (strcmp(argv[argc], "]]") != 0) {
-				bb_error_msg("missing ]]");
+				bb_simple_error_msg("missing ]]");
 				return 2;
 			}
 		}
