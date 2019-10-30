@@ -504,12 +504,14 @@ static ALWAYS_INLINE double MAXD(double a, double b)
 		return a;
 	return b;
 }
+#if !USING_KERNEL_PLL_LOOP
 static ALWAYS_INLINE double MIND(double a, double b)
 {
 	if (a < b)
 		return a;
 	return b;
 }
+#endif
 static NOINLINE double my_SQRT(double X)
 {
 	union {
@@ -1874,9 +1876,11 @@ update_local_clock(peer_t *p)
 //15:31:53.473 update from:<IP> offset:+0.000007 delay:0.158142 jitter:0.010922 clock drift:+9.343ppm tc:6
 //15:32:58.902 update from:<IP> offset:-0.000728 delay:0.158222 jitter:0.009454 clock drift:+9.298ppm tc:6
 			/*
-			 * This expression would choose MIN_FREQHOLD + 8 in the above example.
+			 * This expression would choose MIN_FREQHOLD + 8 in the above example
+			 * (off_065 is +1 for each 0.065536 seconds of offset).
 			 */
-			G.FREQHOLD_cnt = 1 + MIN_FREQHOLD + ((unsigned)(abs(tmx.offset)) >> 16);
+			unsigned off_065 = abs((int)(tmx.offset >> 16));
+			G.FREQHOLD_cnt = 1 + MIN_FREQHOLD + off_065;
 		}
 		G.FREQHOLD_cnt--;
 		tmx.status |= STA_FREQHOLD;
